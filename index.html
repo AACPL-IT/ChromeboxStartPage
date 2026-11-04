@@ -70,7 +70,7 @@
   /* Header: always white so the full-color logo sits on its approved background */
   .masthead {
     background: #ffffff;
-    padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1.25rem, 6vw, 6rem);
+    padding: clamp(0.5rem, 1.25vw, 0.875rem) clamp(1.25rem, 6vw, 6rem);
   }
   .masthead-inner {
     max-width: 72rem;
@@ -80,16 +80,16 @@
     align-items: center;
     gap: 1.5rem;
   }
-  .logo { display: block; width: clamp(180px, 22vw, 300px); height: auto; }
+  .logo { display: block; width: 200px; max-width: 45vw; height: auto; }
   .lang {
     font: inherit;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--sapphire);
     background: #ffffff;
     border: 2px solid var(--sapphire);
     border-radius: 2rem;
-    padding: 0.4rem 1.2rem;
+    padding: 0.3rem 1rem;
     cursor: pointer;
   }
   .lang:hover { background: var(--sapphire); color: #ffffff; }
@@ -100,7 +100,7 @@
     overflow: hidden;
     background: var(--sapphire);
     color: #ffffff;
-    padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 6vw, 6rem);
+    padding: clamp(1.5rem, 3.5vw, 2.75rem) clamp(1.25rem, 6vw, 6rem);
   }
   .hero::after {
     content: "";
@@ -128,7 +128,7 @@
     font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: clamp(2.6rem, 1.6rem + 4vw, 5.5rem);
+    font-size: clamp(2.2rem, 1.35rem + 3.4vw, 4.7rem);
     line-height: 0.98;
     letter-spacing: 0.01em;
     max-width: 16ch;
@@ -163,23 +163,39 @@
     gap: clamp(1.5rem, 3vw, 2.5rem);
     margin-bottom: clamp(2rem, 4vw, 3rem);
   }
-  .fact {
+  /* Large icon badges: each section gets its own color and symbol */
+  .big-badge {
+    width: clamp(4.25rem, 3.4rem + 2vw, 5.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
     display: grid;
-    grid-template-columns: 3rem 1fr;
-    gap: 1rem;
-    align-items: start;
+    place-items: center;
+    flex: none;
+    color: #ffffff;
   }
-  .fact svg { width: 3rem; height: 3rem; color: var(--icon); }
+  .big-badge svg { width: 56%; height: 56%; }
+  .bb-green { background: var(--middle-green); }
+  .bb-blue { background: var(--french-blue); }
+  .bb-pumpkin { background: var(--pumpkin); color: var(--midnight); }
+  .bb-yellow { background: var(--max-yellow); color: var(--midnight); }
+  .bb-cyan { background: var(--cyan); color: var(--midnight); }
+  .bb-lime { background: var(--yellow-green); color: var(--midnight); }
+  .fact .big-badge { margin-bottom: 1rem; }
   h2 {
     margin: 0 0 0.4rem;
     font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
     font-weight: 700;
     line-height: 1.25;
   }
+  .fact > div { margin: 0; }
   .fact p { margin: 0; color: var(--ink-soft); max-width: 46ch; }
   .fact p strong { color: var(--ink); }
 
   .save {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+    align-items: center;
     background: var(--panel);
     border-left: 6px solid var(--pumpkin);
     padding: 1.25rem 1.5rem;
@@ -198,34 +214,20 @@
   }
   .note {
     display: grid;
-    grid-template-columns: 3.25rem 1fr;
-    gap: 1rem;
-    align-items: start;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    align-items: center;
   }
   .note p { margin: 0; color: var(--ink-soft); }
   .note p strong { color: var(--ink); }
-  .badge {
-    width: 3.25rem;
-    height: 3.25rem;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    color: #ffffff;
-  }
-  .badge svg { width: 1.9rem; height: 1.9rem; }
-  .badge-print { background: var(--french-blue); }
-  .badge-access { background: var(--middle-green); }
-  .badge-help { background: var(--max-yellow); color: var(--midnight); }
 
   /* Taskbar pointer: sits right above the real ChromeOS shelf */
   .shelf {
     background: var(--midnight);
     color: #ffffff;
-    padding: 1rem clamp(1.25rem, 6vw, 6rem);
+    padding: 1rem 1.25rem;
   }
   .shelf-inner {
-    max-width: 72rem;
-    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -239,13 +241,66 @@
     gap: 0.6rem;
     font-weight: 700;
   }
-  .shelf svg { width: 1.75rem; height: 1.75rem; flex: none; color: var(--max-yellow); }
+  .shelf p.shelf-exit {
+    margin-left: auto;
+    justify-content: flex-end;
+    text-align: right;
+  }
+  .shelf svg { width: 2.25rem; height: 2.25rem; flex: none; color: var(--max-yellow); }
   .bounce { animation: nudge 1.6s ease-in-out 3; }
   @keyframes nudge {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(6px); }
   }
   @media (prefers-reduced-motion: reduce) { .bounce { animation: none; } }
+
+
+  /* Why Chromeboxes button and popup */
+  .actions { display: flex; flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .why-btn {
+    font: inherit; font-weight: 700; color: #ffffff; background: transparent;
+    border: 2px solid #ffffff; border-radius: 0.4rem; padding: 0.8rem 1.6rem;
+    cursor: pointer; white-space: nowrap;
+  }
+  .why-btn:hover { background: rgba(255, 255, 255, 0.15); }
+  .why {
+    width: min(56rem, calc(100vw - 2rem)); max-height: calc(100vh - 3rem);
+    padding: 0; border: 0; border-radius: 0.6rem;
+    background: var(--page); color: var(--ink); overflow: hidden;
+    box-shadow: 0 1.5rem 4rem rgba(4, 45, 58, 0.45);
+  }
+  .why[open] { display: flex; flex-direction: column; }
+  .why::backdrop { background: rgba(4, 45, 58, 0.7); }
+  .why-head {
+    background: var(--sapphire); color: #ffffff; padding: 1.25rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex: none;
+  }
+  .why-head h2 {
+    margin: 0; font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-weight: 700;
+    text-transform: uppercase; font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.6rem); line-height: 1;
+  }
+  .why-close {
+    flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%;
+    border: 2px solid #ffffff; background: transparent; color: #ffffff;
+    cursor: pointer; display: grid; place-items: center;
+  }
+  .why-close:hover { background: rgba(255, 255, 255, 0.15); }
+  .why-close svg { width: 1.3rem; height: 1.3rem; }
+  .why-body { overflow-y: auto; flex: 1; }
+  .why-section { padding: 1.5rem; }
+  .reason {
+    display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;
+    padding: 1.1rem 0; border-top: 1px solid var(--rule);
+  }
+  .reason .big-badge { width: clamp(4rem, 3.4rem + 1.5vw, 5rem); }
+  .numeral {
+    display: block;
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-weight: 700;
+    font-size: 1.4rem; line-height: 1; color: var(--icon); margin-bottom: 0.15rem;
+  }
+  .reason:first-child { border-top: 0; padding-top: 0; }
+  .reason p { margin: 0; color: var(--ink-soft); }
+  .reason p strong { color: var(--ink); }
 
   @media (max-width: 48rem) {
     .hero-inner { grid-template-columns: 1fr; }
@@ -266,9 +321,11 @@
     <div class="hero-inner">
       <div>
         <h1 data-i18n="title">Welcome. This computer is ready to use.</h1>
-        <p class="lede" data-i18n="lede">No library card, password, or account is needed to get started.</p>
       </div>
-      <a class="services" href="https://www.aacpl.net/join-aacpl" data-i18n="services">Explore library services</a>
+      <div class="actions">
+        <a class="services" href="https://www.aacpl.net/join-aacpl" data-i18n="services">Explore library services</a>
+        <button class="why-btn" id="why-open" type="button" data-i18n="whyBtn">Why Chromeboxes?</button>
+      </div>
     </div>
   </div>
 </header>
@@ -277,32 +334,21 @@
 <div class="main-inner">
   <section class="facts">
     <div class="fact">
-      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true">
-        <path d="M24 4 7 11v12c0 10.5 7.2 18.6 17 21 9.8-2.4 17-10.5 17-21V11L24 4Z"/>
-        <path d="m16 24 6 6 11-12" stroke-linecap="round"/>
-      </svg>
+      <span class="big-badge bb-green" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 9.5 4-1.2 7-5 7-9.5V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
       <div>
         <h2 data-i18n="guestTitle">You’re using a private guest session</h2>
         <p data-i18n="guestBody">This computer signed in for you automatically. <strong>No personal or identifying information is used</strong> to start your session.</p>
       </div>
     </div>
     <div class="fact">
-      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M40 24a16 16 0 1 1-4.7-11.3"/>
-        <path d="M40 6v8h-8"/>
-        <path d="m18 18 12 12M30 18 18 30"/>
-      </svg>
+      <span class="big-badge bb-pumpkin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/><path d="m9.5 9.5 5 5M14.5 9.5l-5 5"/></svg></span>
       <div>
         <h2 data-i18n="eraseTitle">Everything is erased when you leave</h2>
         <p data-i18n="eraseBody">When you click <strong>Exit Session</strong> or the computer restarts, all of your files, downloads, browsing history, and website logins are <strong>permanently deleted</strong>.</p>
       </div>
     </div>
     <div class="fact">
-      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="9" y="21" width="30" height="22" rx="3"/>
-        <path d="M16 21v-6a8 8 0 0 1 16 0v6"/>
-        <path d="M24 30v5"/>
-      </svg>
+      <span class="big-badge bb-blue" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/><path d="M12 15v2"/></svg></span>
       <div>
         <h2 data-i18n="lockTitle">Stepping away for a moment?</h2>
         <p data-i18n="lockBody">Click the <strong>lock icon</strong> on the taskbar to lock your screen. This is a courtesy lock only, so <strong>don’t leave private information on the screen</strong> while you’re away.</p>
@@ -311,25 +357,24 @@
   </section>
 
   <section class="save">
-    <p><strong data-i18n="saveTitle">Want to keep your work? Save a copy before you go:</strong></p>
-    <ul>
-      <li data-i18n="save1">Copy it to your own USB drive</li>
-      <li data-i18n="save2">Email it to yourself, or upload it to your own online storage</li>
-      <li data-i18n="save3">Print it</li>
-    </ul>
+    <span class="big-badge bb-yellow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="9" width="10" height="13" rx="2"/><path d="M9 9V3h6v6"/><path d="M11 5.5h.01M13 5.5h.01"/></svg></span>
+    <div>
+      <p><strong data-i18n="saveTitle">Want to keep your work? Save a copy before you go:</strong></p>
+      <ul>
+        <li data-i18n="save1">Copy it to your own USB drive</li>
+        <li data-i18n="save2">Email it to yourself, or upload it to your own online storage</li>
+        <li data-i18n="save3">Print it</li>
+      </ul>
+    </div>
   </section>
 
   <section class="notes">
     <div class="note">
-      <span class="badge badge-access" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.8" fill="currentColor" stroke="none"/><path d="M5 8.5l7 1.5 7-1.5"/><path d="M12 10v4.5"/><path d="M12 14.5l-3 6.5M12 14.5l3 6.5"/></svg>
-      </span>
+      <span class="big-badge bb-cyan" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.8" fill="currentColor" stroke="none"/><path d="M5 8.5l7 1.5 7-1.5"/><path d="M12 10v4.5"/><path d="M12 14.5l-3 6.5M12 14.5l3 6.5"/></svg></span>
       <p data-i18n="access"><strong>Need help seeing or hearing the screen?</strong> Accessibility options are in the system tray at the lower right corner of the screen.</p>
     </div>
     <div class="note">
-      <span class="badge badge-help" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.2 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><path d="M12 18.5h.01" stroke-width="3"/></svg>
-      </span>
+      <span class="big-badge bb-lime" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.2 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><path d="M12 18.5h.01" stroke-width="3"/></svg></span>
       <p data-i18n="help"><strong>Need a hand?</strong> Library staff are happy to help. Just ask at the service desk.</p>
     </div>
   </section>
@@ -342,15 +387,52 @@
     <div class="shelf-inner">
       <p>
         <svg class="bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M5 13l7 7 7-7"/></svg>
-        <span data-i18n="shelfLeft">Print, New Document, the screen lock, and other popular tools are on the taskbar below.</span>
+        <span data-i18n="shelfLeft">New Document, Courtesy Lock, and other popular tools are on the taskbar below.</span>
       </p>
-      <p>
+      <p class="shelf-exit">
         <span data-i18n="shelfRight">Done? Click Exit Session in the lower right corner.</span>
         <svg class="bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7l10 10M17 8v9H8"/></svg>
       </p>
     </div>
   </div>
 </footer>
+
+<dialog class="why" id="why" aria-labelledby="why-title">
+  <div class="why-head">
+    <h2 id="why-title" data-i18n="whyTitle">Why we’re switching to Chromeboxes</h2>
+    <button class="why-close" id="why-close" type="button" aria-label="Close" data-i18n-label="closeLabel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="why-body">
+    <div class="why-section">
+      <div class="reason">
+        <span class="big-badge bb-green" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 9.5 4-1.2 7-5 7-9.5V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <div>
+          <span class="numeral" aria-hidden="true">01</span>
+          <h2 data-i18n="r1Title">Your safety comes first</h2>
+          <p data-i18n="r1Body">Our top priorities are <strong>keeping your personal information safe</strong> and <strong>keeping computers available</strong> for everyone who needs one. Every choice we make about our public computers starts there.</p>
+        </div>
+      </div>
+      <div class="reason">
+        <span class="big-badge bb-pumpkin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.5 20h19L12 3.5Z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01" stroke-width="3"/></svg></span>
+        <div>
+          <span class="numeral" aria-hidden="true">02</span>
+          <h2 data-i18n="r2Title">Security problems are growing fast</h2>
+          <p data-i18n="r2Body">Security researchers are finding flaws in mainstream operating systems at an alarming rate. Each flaw has to be fixed with an update, and computers waiting on updates can be at risk or out of service. These systems are far more complex than our customers need, and every extra part is another place for something to go wrong.</p>
+        </div>
+      </div>
+      <div class="reason">
+        <span class="big-badge bb-blue" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3Z"/></svg></span>
+        <div>
+          <span class="numeral" aria-hidden="true">03</span>
+          <h2 data-i18n="r3Title">Built for how you use our computers</h2>
+          <p data-i18n="r3Body">Our own data shows that <strong>a large majority of customers use our computers to browse the internet</strong>. Chromeboxes are designed around the web browser, so they do that job well while leaving out much of what makes other operating systems harder to protect.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
 
 <script>
   const strings = {
@@ -359,7 +441,6 @@
       toggle: "English",
       logoAlt: "Biblioteca Pública del Condado de Anne Arundel",
       title: "Bienvenido. Esta computadora está lista para usar.",
-      lede: "No necesita tarjeta de la biblioteca, contraseña ni cuenta para comenzar.",
       services: "Explorar los servicios de la biblioteca",
       guestTitle: "Está usando una sesión privada de invitado",
       guestBody: "Esta computadora inició la sesión automáticamente. <strong>No se usa ninguna información personal ni que lo identifique</strong> para iniciar su sesión.",
@@ -373,7 +454,16 @@
       save3: "Imprímalo",
       access: "<strong>¿Necesita ayuda para ver u oír la pantalla?</strong> Las opciones de accesibilidad están en la bandeja del sistema, en la esquina inferior derecha de la pantalla.",
       help: "<strong>¿Necesita ayuda?</strong> El personal de la biblioteca con gusto le ayudará. Pregunte en el mostrador de servicio.",
-      shelfLeft: "Imprimir, Nuevo documento, el bloqueo de pantalla y otras herramientas populares están en la barra de tareas de abajo.",
+      whyBtn: "¿Por qué Chromebox?",
+      whyTitle: "Por qué cambiamos a Chromebox",
+      closeLabel: "Cerrar",
+      r1Title: "Su seguridad es lo primero",
+      r1Body: "Nuestras principales prioridades son <strong>proteger su información personal</strong> y <strong>mantener las computadoras disponibles</strong> para todos los que las necesiten. Cada decisión que tomamos sobre nuestras computadoras públicas parte de ahí.",
+      r2Title: "Los problemas de seguridad crecen rápidamente",
+      r2Body: "Los investigadores de seguridad están encontrando fallas en los sistemas operativos convencionales a un ritmo alarmante. Cada falla debe corregirse con una actualización, y las computadoras que esperan actualizaciones pueden estar en riesgo o fuera de servicio. Estos sistemas son mucho más complejos de lo que nuestros usuarios necesitan, y cada parte adicional es otro lugar donde algo puede salir mal.",
+      r3Title: "Diseñadas para el uso que usted les da",
+      r3Body: "Nuestros propios datos muestran que <strong>la gran mayoría de los usuarios usa nuestras computadoras para navegar por internet</strong>. Las Chromebox están diseñadas en torno al navegador web, así que hacen bien ese trabajo y dejan fuera mucho de lo que hace que otros sistemas operativos sean más difíciles de proteger.",
+      shelfLeft: "Nuevo documento, el bloqueo de cortesía y otras herramientas populares están en la barra de tareas de abajo.",
       shelfRight: "¿Terminó? Haga clic en Exit Session en la esquina inferior derecha."
     }
   };
@@ -385,6 +475,9 @@
   });
   document.querySelectorAll("[data-i18n-alt]").forEach(el => {
     strings.en[el.dataset.i18nAlt] = el.alt;
+  });
+  document.querySelectorAll("[data-i18n-label]").forEach(el => {
+    strings.en[el.dataset.i18nLabel] = el.getAttribute("aria-label");
   });
 
   const toggle = document.getElementById("lang-toggle");
@@ -402,12 +495,23 @@
       const value = t[el.dataset.i18nAlt];
       if (value !== undefined) el.alt = value;
     });
+    document.querySelectorAll("[data-i18n-label]").forEach(el => {
+      const value = t[el.dataset.i18nLabel];
+      if (value !== undefined) el.setAttribute("aria-label", value);
+    });
     toggle.textContent = t.toggle;
     toggle.lang = lang === "en" ? "es" : "en";
     current = lang;
   }
 
   toggle.addEventListener("click", () => setLanguage(current === "en" ? "es" : "en"));
+
+  // Why Chromeboxes popup
+  const why = document.getElementById("why");
+  document.getElementById("why-open").addEventListener("click", () => why.showModal());
+  document.getElementById("why-close").addEventListener("click", () => why.close());
+  // Clicking the dimmed area outside the popup closes it; Esc closes it too.
+  why.addEventListener("click", e => { if (e.target === why) why.close(); });
 </script>
 
 </body>
