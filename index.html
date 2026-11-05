@@ -323,7 +323,7 @@
         <h1 data-i18n="title">Welcome. This computer is ready to use.</h1>
       </div>
       <div class="actions">
-        <a class="services" href="https://www.aacpl.net/join-aacpl" data-i18n="services">Explore library services</a>
+        <a class="services" id="branch-link" href="https://www.aacpl.net/services/locations-hours" data-i18n="services">Explore library services</a>
         <button class="why-btn" id="why-open" type="button" data-i18n="whyBtn">Why Chromeboxes?</button>
       </div>
     </div>
@@ -505,6 +505,69 @@
   }
 
   toggle.addEventListener("click", () => setLanguage(current === "en" ? "es" : "en"));
+
+  // ---------------------------------------------------------------------------
+  // Branch link
+  // The "Explore library services" button opens the page for the branch the
+  // patron is at. The branch is worked out in this order:
+  //   1. A ?branch=<path> setting in this page's address (optional override,
+  //      e.g. index.html?branch=location/severnapark).
+  //   2. The branch's public IP address, looked up in BRANCHES below.
+  //   3. If neither works, the Locations & Hours page.
+  //
+  // BRANCHES: one line per branch. The left side is the part of the branch
+  // page's address after "https://www.aacpl.net/". The right side lists the
+  // branch's public IPs: HDQ Comcast Fiber, WCO Comcast Fiber, Sailor.
+  // Paths marked "verify" follow the site's naming pattern but have not been
+  // confirmed. Open each one in a browser and correct any that don't load.
+  // ---------------------------------------------------------------------------
+  const BRANCHES = {
+    "location/glenburnie":    ["50.144.176.114", "50.144.239.130", "64.26.116.214"], // Glen Burnie (verify)
+    "location/brooklynpark":  ["50.144.176.106", "50.144.239.131", "64.26.116.206"], // Brooklyn Park (verify)
+    "location/mountainroad":  ["50.144.176.104", "50.144.239.132", "64.26.116.204"], // Mountain Road (verify)
+    "location/rivierabeach":  ["50.144.176.115", "50.144.239.133", "64.26.116.215"], // Riviera Beach
+    "location/severnapark":   ["50.144.176.118", "50.144.239.134", "64.26.116.218"], // Severna Park
+    "location/annapolis":     ["50.144.176.105", "50.144.239.135", "64.26.116.205"], // Annapolis (verify)
+    "location/broadneck":     ["50.144.176.107", "50.144.239.136", "64.26.116.207"], // Broadneck (verify)
+    "location/deale":         ["50.144.176.117", "50.144.239.137", "64.26.116.217"], // Deale (verify)
+    "services/Eastport-Annapolis-Neck": ["50.144.176.109", "50.144.239.138", "64.26.116.209"], // Eastport Annapolis Neck
+    "location/edgewater":     ["50.144.176.110", "50.144.239.139", "64.26.116.210"], // Edgewater (verify)
+    "location/odenton":       ["50.144.176.119", "50.144.239.98",  "64.26.116.219"], // Odenton (verify)
+    "location/crofton":       ["50.144.176.108", "50.144.239.141", "64.26.116.208"], // Crofton (verify)
+    "location/linthicum":     ["50.144.176.112", "50.144.239.142", "64.26.116.212"], // Linthicum (verify)
+    "location/marylandcity":  ["50.144.176.111", "50.144.239.143", "64.26.116.211"], // Maryland City at Russett (verify)
+    "location/severn":        ["50.144.176.113", "50.144.239.144", "64.26.116.213"], // Severn (verify)
+    "services/discoveries":   ["50.211.129.221"],                                      // Discoveries: The Library at the Mall (one IP)
+    // Administration: no branch page, so it uses the Locations & Hours fallback.
+  };
+
+  (function () {
+    const link = document.getElementById("branch-link");
+    const validPath = /^[A-Za-z0-9_-]+(\/[A-Za-z0-9_-]+)*$/;
+    const useBranch = path => {
+      if (path && validPath.test(path)) {
+        link.href = "https://www.aacpl.net/" + path;
+        return true;
+      }
+      return false;
+    };
+
+    // 1. Address override
+    if (useBranch(new URLSearchParams(location.search).get("branch"))) return;
+
+    // 2. Public IP lookup (gives up after 4 seconds and keeps the fallback link)
+    const byIp = {};
+    for (const [path, ips] of Object.entries(BRANCHES)) {
+      for (const ip of ips) byIp[ip] = path;
+    }
+    if (Object.keys(byIp).length === 0) return;
+    const timeout = new AbortController();
+    setTimeout(() => timeout.abort(), 4000);
+    fetch("https://api.ipify.org?format=json", { signal: timeout.signal, cache: "no-store" })
+      .then(r => r.json())
+      .then(data => useBranch(byIp[data.ip]))
+      .catch(() => { /* lookup failed: keep the Locations & Hours link */ });
+  })();
 
   // Why Chromeboxes popup
   const why = document.getElementById("why");
