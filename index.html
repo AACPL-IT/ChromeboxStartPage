@@ -222,6 +222,13 @@
   .note p strong { color: var(--ink); }
 
   /* Taskbar pointer: sits right above the real ChromeOS shelf */
+  /* Keep the color bar and taskbar pointers in view while the page scrolls */
+  footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    box-shadow: 0 -0.5rem 1.5rem rgba(4, 45, 58, 0.18);
+  }
   .shelf {
     background: var(--midnight);
     color: #ffffff;
@@ -323,7 +330,7 @@
         <h1 data-i18n="title">Welcome. This computer is ready to use.</h1>
       </div>
       <div class="actions">
-        <a class="services" id="branch-link" href="https://www.aacpl.net/services/locations-hours" data-i18n="services">Explore library services</a>
+        <a class="services" href="https://www.aacpl.net/services/everyone" data-i18n="services">Explore library services</a>
         <button class="why-btn" id="why-open" type="button" data-i18n="whyBtn">Why Chromeboxes?</button>
       </div>
     </div>
@@ -507,19 +514,12 @@
   toggle.addEventListener("click", () => setLanguage(current === "en" ? "es" : "en"));
 
   // ---------------------------------------------------------------------------
-  // Branch link
-  // The "Explore library services" button opens the page for the branch the
-  // patron is at. The branch is worked out in this order:
-  //   1. A ?branch=<path> setting in this page's address (optional override,
-  //      e.g. index.html?branch=location/severnapark).
-  //   2. The branch's public IP address, looked up in BRANCHES below.
-  //   3. If neither works, the Locations & Hours page.
-  //
-  // BRANCHES: one line per branch. The left side is the part of the branch
-  // page's address after "https://www.aacpl.net/". The right side lists the
-  // branch's public IPs: HDQ Comcast Fiber, WCO Comcast Fiber, Sailor.
-  // Paths marked "verify" follow the site's naming pattern but have not been
-  // confirmed. Open each one in a browser and correct any that don't load.
+  // Branch IP reference (not currently used)
+  // The "Explore library services" button always opens services/everyone.
+  // This table of each branch's public IPs and branch page is kept here for
+  // possible future use. Left side: the part of the branch page's address
+  // after "https://www.aacpl.net/". Right side: HDQ Comcast Fiber,
+  // WCO Comcast Fiber, Sailor. Paths marked "verify" haven't been confirmed.
   // ---------------------------------------------------------------------------
   const BRANCHES = {
     "location/glenburnie":    ["50.144.176.114", "50.144.239.130", "64.26.116.214"], // Glen Burnie (verify)
@@ -538,36 +538,9 @@
     "location/marylandcity":  ["50.144.176.111", "50.144.239.143", "64.26.116.211"], // Maryland City at Russett (verify)
     "location/severn":        ["50.144.176.113", "50.144.239.144", "64.26.116.213"], // Severn (verify)
     "services/discoveries":   ["50.211.129.221"],                                      // Discoveries: The Library at the Mall (one IP)
-    // Administration: no branch page, so it uses the Locations & Hours fallback.
+    // Administration: no branch page.
   };
 
-  (function () {
-    const link = document.getElementById("branch-link");
-    const validPath = /^[A-Za-z0-9_-]+(\/[A-Za-z0-9_-]+)*$/;
-    const useBranch = path => {
-      if (path && validPath.test(path)) {
-        link.href = "https://www.aacpl.net/" + path;
-        return true;
-      }
-      return false;
-    };
-
-    // 1. Address override
-    if (useBranch(new URLSearchParams(location.search).get("branch"))) return;
-
-    // 2. Public IP lookup (gives up after 4 seconds and keeps the fallback link)
-    const byIp = {};
-    for (const [path, ips] of Object.entries(BRANCHES)) {
-      for (const ip of ips) byIp[ip] = path;
-    }
-    if (Object.keys(byIp).length === 0) return;
-    const timeout = new AbortController();
-    setTimeout(() => timeout.abort(), 4000);
-    fetch("https://api.ipify.org?format=json", { signal: timeout.signal, cache: "no-store" })
-      .then(r => r.json())
-      .then(data => useBranch(byIp[data.ip]))
-      .catch(() => { /* lookup failed: keep the Locations & Hours link */ });
-  })();
 
   // Why Chromeboxes popup
   const why = document.getElementById("why");
