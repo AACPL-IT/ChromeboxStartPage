@@ -52,8 +52,14 @@
     flex-direction: column;
   }
   a { color: inherit; }
-  a:focus-visible, button:focus-visible {
-    outline: 4px solid var(--max-yellow);
+  /* Focus outline color is chosen per background so it always has 3:1 contrast
+     (Midnight on light areas, Maximum Yellow on dark areas) */
+  :root { --focus: #042D3A; }
+  @media (prefers-color-scheme: dark) { :root { --focus: #FFBC42; } }
+  .topbar { --focus: #042D3A; }          /* top bar is white in both modes */
+  .why-head { --focus: #FFBC42; }        /* popup title bars are brand blue */
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 4px solid var(--focus);
     outline-offset: 3px;
   }
 
@@ -246,7 +252,7 @@
   .main-inner { max-width: 80rem; }
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
     gap: clamp(0.65rem, 1.2vw, 1rem);
   }
   .card {
@@ -261,13 +267,14 @@
   .card p, .card li { margin: 0; color: var(--ink-soft); font-size: clamp(0.95rem, 0.88rem + 0.2vw, 1.05rem); line-height: 1.45; }
   .card p strong { color: var(--ink); }
   .card ul { margin: 0.2rem 0 0; padding-left: 1.15rem; }
+  .card p + p { margin-top: 0.4rem; }
 
 
   /* Why Chromeboxes: filled button with an info icon and a short attention pulse */
   .topbar .why-btn {
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: var(--sapphire); color: #ffffff; border-color: var(--sapphire);
-    animation: why-pulse 1.8s ease-out 0.8s 3;
+    animation: why-pulse 1.8s ease-out 0.6s 2;
   }
   .topbar .why-btn:hover { background: var(--midnight); border-color: var(--midnight); color: #ffffff; }
   .topbar .why-btn svg { width: 1.3rem; height: 1.3rem; flex: none; }
@@ -285,9 +292,9 @@
     margin-bottom: clamp(0.65rem, 1.2vw, 1rem);
   }
   .catalog-label { font-weight: 700; color: var(--ink); }
-  .catalog-row { display: flex; flex: 1 1 28rem; max-width: 44rem; }
+  .catalog-row { display: flex; flex-wrap: wrap; flex: 1 1 28rem; max-width: 44rem; min-width: 0; }
   .catalog-row input {
-    flex: 1; min-width: 0;
+    flex: 1 1 12rem; min-width: 0;
     font: inherit; font-size: 1.05rem; color: var(--ink);
     background: var(--page);
     border: 2px solid var(--sapphire); border-right: 0;
@@ -295,7 +302,7 @@
     padding: 0.45rem 0.9rem;
   }
   .catalog-row input::placeholder { color: var(--ink-soft); opacity: 0.85; }
-  .catalog-row input:focus-visible { outline: 3px solid var(--max-yellow); outline-offset: 0; }
+  .catalog-row input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
   .catalog-btn {
     display: inline-flex; align-items: center; gap: 0.45rem;
     font: inherit; font-weight: 700; white-space: nowrap;
@@ -307,6 +314,101 @@
   .catalog-btn svg { width: 1.2rem; height: 1.2rem; }
   @media (prefers-color-scheme: dark) {
     .catalog-row input { border-color: var(--cyan); }
+  }
+
+
+
+  /* Links inside cards */
+  .card a { color: var(--sapphire); font-weight: 700; text-decoration: underline; text-underline-offset: 0.15em; }
+  .card a:hover { color: var(--midnight); }
+  @media (prefers-color-scheme: dark) {
+    .card a { color: var(--cyan); }
+    .card a:hover { color: #ffffff; }
+  }
+
+
+  /* Button that looks like a text link (opens a popup) */
+  .link-btn {
+    font: inherit; font-weight: 700; color: var(--sapphire);
+    background: none; border: 0; padding: 0; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 0.15em; text-align: left;
+  }
+  .link-btn:hover { color: var(--midnight); }
+  @media (prefers-color-scheme: dark) {
+    .link-btn { color: var(--cyan); }
+    .link-btn:hover { color: #ffffff; }
+  }
+  /* Numbered printing steps */
+  .steps { list-style: none; counter-reset: step; margin: 0; padding: 0; }
+  .steps li {
+    counter-increment: step; position: relative;
+    padding: 0.85rem 0 0.85rem 3.25rem; border-top: 1px solid var(--rule);
+    color: var(--ink-soft); line-height: 1.5;
+  }
+  .steps li:first-child { border-top: 0; padding-top: 0.25rem; }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: 0.7rem;
+    width: 2.25rem; height: 2.25rem; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--pumpkin); color: var(--midnight); font-weight: 700;
+  }
+  .steps li:first-child::before { top: 0.1rem; }
+  .steps strong { color: var(--ink); }
+  .steps a { color: var(--sapphire); font-weight: 700; text-decoration: underline; text-underline-offset: 0.15em; }
+  .steps a:hover { color: var(--midnight); }
+  @media (prefers-color-scheme: dark) {
+    .steps a { color: var(--cyan); }
+    .steps a:hover { color: #ffffff; }
+  }
+  kbd {
+    font: inherit; font-size: 0.9em; font-weight: 700; color: var(--ink);
+    border: 1px solid var(--ink-soft); border-bottom-width: 2px; border-radius: 0.3rem;
+    padding: 0 0.35em; background: var(--panel);
+  }
+
+
+  /* Why Chromeboxes (option C): deep brand-blue gradient, yellow info icon, orange "New" tag */
+  .topbar .why-btn {
+    background: linear-gradient(135deg, #0E5B74 0%, #042D3A 100%);
+    border-color: #042D3A;
+    color: #ffffff;
+    box-shadow: 0 0.25rem 0.75rem rgba(4, 45, 58, 0.35);
+    animation-name: why-pulse-new;
+  }
+  .topbar .why-btn:hover {
+    background: linear-gradient(135deg, #0B4A5E 0%, #021E27 100%);
+    border-color: #021E27;
+    color: #ffffff;
+  }
+  .topbar .why-btn svg { color: #FFBC42; }
+  .new-tag {
+    background: #FA7921; color: #042D3A;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    border-radius: 999px; padding: 0.1rem 0.5rem; line-height: 1.4;
+  }
+  @keyframes why-pulse-new {
+    0%   { box-shadow: 0 0 0 0 rgba(250, 121, 33, 0.6); }
+    70%  { box-shadow: 0 0 0 0.75rem rgba(250, 121, 33, 0); }
+    100% { box-shadow: 0 0.25rem 0.75rem rgba(4, 45, 58, 0.35); }
+  }
+
+  /* ---------- Accessibility adjustments ---------- */
+  /* Hidden text for screen readers only */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  /* Keep keyboard focus from hiding behind the floating bottom bar */
+  html { scroll-padding-bottom: 6rem; }
+  .why-body:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+  /* Narrow screens or high zoom: let buttons wrap and stop the bottom bar from floating
+     so it can't cover most of the screen */
+  @media (max-width: 40rem), (max-height: 32rem) {
+    body footer { position: static; box-shadow: none; }
+    html { scroll-padding-bottom: 0; }
+    .services, .topbar .why-btn, .catalog-btn { white-space: normal; }
+    .catalog-row input { border-right: 2px solid var(--sapphire); border-radius: 0.4rem; }
+    .catalog-btn { border-radius: 0.4rem; margin-top: 0.4rem; }
   }
 
   /* Keep the color bar and taskbar pointers in view while the page scrolls */
@@ -409,9 +511,10 @@
       <h1 data-i18n="title">Welcome. This computer is ready to use.</h1>
       <div class="actions">
         <a class="services" href="https://www.aacpl.net/services/everyone" data-i18n="services">Explore library services</a>
-        <button class="why-btn" id="why-open" type="button">
+        <button class="why-btn" id="why-open" type="button" data-open-dialog="why">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><path d="M12 7.5h.01" stroke-width="3"/></svg>
           <span data-i18n="whyBtn">Why Chromeboxes?</span>
+          <span class="new-tag" data-i18n="newTag">New</span>
         </button>
         <button class="lang" id="lang-toggle" type="button" lang="es">Español</button>
       </div>
@@ -429,22 +532,24 @@
       <button type="submit" class="catalog-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
         <span data-i18n="catalogBtn">Search Catalog</span>
+        <span class="sr-only" data-i18n="newTab">(opens in a new tab)</span>
       </button>
     </div>
   </form>
   <section class="cards">
-    <div class="card">
+    <div class="card card-alert">
       <span class="big-badge bb-green" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 9.5 4-1.2 7-5 7-9.5V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
       <div>
-        <h2 data-i18n="guestTitle">You’re using a private guest session</h2>
-        <p data-i18n="guestBody">This computer signed in for you automatically. <strong>No personal or identifying information is used</strong> to start your session.</p>
+        <h2 data-i18n="privacyTitle">Your privacy matters</h2>
+        <p data-i18n="privacyBody1">No login was required because we do not collect any personal information.</p>
+        <p data-i18n="privacyBody2">When you click <strong>Exit Session</strong> or the computer restarts, everything you did on this computer is <strong>permanently deleted</strong>.</p>
       </div>
     </div>
-    <div class="card card-alert">
-      <span class="big-badge bb-pumpkin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/><path d="m9.5 9.5 5 5M14.5 9.5l-5 5"/></svg></span>
+    <div class="card">
+      <span class="big-badge bb-pumpkin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17.5 12h.01" stroke-width="2.6"/></svg></span>
       <div>
-        <h2 data-i18n="eraseTitle">Everything is erased when you leave</h2>
-        <p data-i18n="eraseBody">When you click <strong>Exit Session</strong> or the computer restarts, all of your files, downloads, browsing history, and website logins are <strong>permanently deleted</strong>.</p>
+        <h2 data-i18n="printTitle">Need to print?</h2>
+        <p data-i18n="printBody"><button type="button" class="link-btn" data-open-dialog="print-help">Click HERE for instructions</button>, or click the <strong>Printer icon</strong> on the taskbar to get started.</p>
       </div>
     </div>
     <div class="card">
@@ -486,7 +591,7 @@
   <div class="shelf">
     <div class="shelf-inner">
       <p>
-        <span data-i18n="shelfLeft">New Document, Courtesy Lock, and other popular tools are on the taskbar below.</span>
+        <span data-i18n="shelfLeft">Popular tools are on the taskbar below.</span>
         <svg class="bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M5 13l7 7 7-7"/></svg>
       </p>
       <p class="shelf-exit">
@@ -500,11 +605,11 @@
 <dialog class="why" id="why" aria-labelledby="why-title">
   <div class="why-head">
     <h2 id="why-title" data-i18n="whyTitle">Why we’re switching to Chromeboxes</h2>
-    <button class="why-close" id="why-close" type="button" aria-label="Close" data-i18n-label="closeLabel">
+    <button class="why-close" id="why-close" type="button" aria-label="Close" data-i18n-label="closeLabel" data-close-dialog>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
   </div>
-  <div class="why-body">
+  <div class="why-body" tabindex="0" role="region" aria-labelledby="why-title">
     <div class="why-section">
       <div class="reason">
         <span class="big-badge bb-green" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 9.5 4-1.2 7-5 7-9.5V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
@@ -534,6 +639,27 @@
   </div>
 </dialog>
 
+<dialog class="why" id="print-help" aria-labelledby="print-help-title">
+  <div class="why-head">
+    <h2 id="print-help-title" data-i18n="printHelpTitle">How to print</h2>
+    <button class="why-close" type="button" aria-label="Close" data-i18n-label="closeLabel" data-close-dialog>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="why-body" tabindex="0" role="region" aria-labelledby="print-help-title">
+    <div class="why-section">
+      <ol class="steps">
+        <li data-i18n="printStep1">Prepare the files you want to print. The print service accepts many popular file formats. One of the easiest ways to print is to start by creating a PDF by pressing <kbd>Ctrl</kbd> + <kbd>P</kbd> and using the <strong>Save as PDF</strong> option.</li>
+        <li data-i18n="printStep2"><a href="https://smartalecplus.smartalecprint.com/?ID=AnnearundelMD" target="_blank" rel="noopener" class="print-service-link">Click HERE<span class="sr-only"> to open the print service (opens in a new tab)</span></a> or click the <strong>Printer icon</strong> on the Chromebox taskbar.</li>
+        <li data-i18n="printStep3">Log in using your <strong>library card number</strong> and <strong>PIN/password</strong>.</li>
+        <li data-i18n="printStep4">Select the file(s) to print, then click <strong>Print</strong>.</li>
+        <li data-i18n="printStep5">You should receive a message saying <strong>Success</strong>.</li>
+        <li data-i18n="printStep6">Go to the <strong>Print Release Kiosk</strong> next to the library’s printer. Log in with your library card number and PIN/password to finish printing.</li>
+      </ol>
+    </div>
+  </div>
+</dialog>
+
 <script>
   const strings = {
     es: {
@@ -541,10 +667,18 @@
       toggle: "English",
       title: "Bienvenido. Esta computadora está lista para usar.",
       services: "Explorar los servicios de la biblioteca",
-      guestTitle: "Está usando una sesión privada de invitado",
-      guestBody: "Esta computadora inició la sesión automáticamente. <strong>No se usa ninguna información personal ni que lo identifique</strong> para iniciar su sesión.",
-      eraseTitle: "Todo se borra cuando termina",
-      eraseBody: "Cuando hace clic en <strong>Exit Session</strong> o la computadora se reinicia, todos sus archivos, descargas, historial de navegación e inicios de sesión en sitios web se <strong>eliminan permanentemente</strong>.",
+      privacyTitle: "Su privacidad es importante",
+      privacyBody1: "No fue necesario iniciar sesión porque no recopilamos ninguna información personal.",
+      privacyBody2: "Cuando hace clic en <strong>Exit Session</strong> o la computadora se reinicia, todo lo que hizo en esta computadora se <strong>elimina permanentemente</strong>.",
+      printTitle: "¿Necesita imprimir?",
+      printBody: "<button type=\"button\" class=\"link-btn\" data-open-dialog=\"print-help\">Haga clic AQUÍ para ver las instrucciones</button> o haga clic en el <strong>icono de la impresora</strong> en la barra de tareas para comenzar.",
+      printHelpTitle: "Cómo imprimir",
+      printStep1: "Prepare los archivos que desea imprimir. El servicio de impresión acepta muchos formatos de archivo populares. Una de las formas más fáciles de imprimir es crear primero un PDF: presione <kbd>Ctrl</kbd> + <kbd>P</kbd> y use la opción <strong>Save as PDF</strong> (Guardar como PDF).",
+      printStep2: "<a href=\"https://smartalecplus.smartalecprint.com/?ID=AnnearundelMD\" target=\"_blank\" rel=\"noopener\" class=\"print-service-link\">Haga clic AQUÍ<span class=\"sr-only\"> para abrir el servicio de impresión (se abre en una pestaña nueva)</span></a> o en el <strong>icono de la impresora</strong> en la barra de tareas de la Chromebox.",
+      printStep3: "Inicie sesión con su <strong>número de tarjeta de la biblioteca</strong> y su <strong>PIN/contraseña</strong>.",
+      printStep4: "Seleccione el archivo o los archivos que desea imprimir y haga clic en <strong>Print</strong> (Imprimir).",
+      printStep5: "Debería recibir un mensaje que dice <strong>Success</strong> (éxito).",
+      printStep6: "Vaya al <strong>quiosco de liberación de impresiones</strong> (Print Release Kiosk) junto a la impresora de la biblioteca. Inicie sesión con su número de tarjeta de la biblioteca y su PIN/contraseña para terminar de imprimir.",
       lockTitle: "¿Se va a alejar por un momento?",
       lockBody: "Haga clic en el <strong>icono del candado</strong> en la barra de tareas para bloquear la pantalla. Es solo un bloqueo de cortesía, así que <strong>no deje información privada en la pantalla</strong> mientras no esté.",
       saveTitle: "¿Quiere conservar su trabajo? Guarde una copia antes de irse:",
@@ -556,7 +690,9 @@
       catalogLabel: "Buscar en el catálogo de la biblioteca",
       catalogPlaceholder: "Libros, películas, música y más",
       catalogBtn: "Buscar en el catálogo",
+      newTab: "(se abre en una pestaña nueva)",
       whyBtn: "¿Por qué Chromebox?",
+      newTag: "Nuevo",
       whyTitle: "Por qué cambiamos a Chromebox",
       closeLabel: "Cerrar",
       r1Title: "Su seguridad es lo primero",
@@ -565,7 +701,7 @@
       r2Body: "Los investigadores de seguridad están encontrando fallas en los sistemas operativos convencionales a un ritmo alarmante. Cada falla debe corregirse con una actualización, y las computadoras que esperan actualizaciones pueden estar en riesgo o fuera de servicio. Estos sistemas son mucho más complejos de lo que nuestros usuarios necesitan, y cada parte adicional es otro lugar donde algo puede salir mal.",
       r3Title: "Diseñadas para el uso que usted les da",
       r3Body: "Nuestros propios datos muestran que <strong>la gran mayoría de los usuarios usa nuestras computadoras para navegar por internet</strong>. Las Chromebox están diseñadas en torno al navegador web, así que hacen bien ese trabajo y dejan fuera mucho de lo que hace que otros sistemas operativos sean más difíciles de proteger.",
-      shelfLeft: "Nuevo documento, el bloqueo de cortesía y otras herramientas populares están en la barra de tareas de abajo.",
+      shelfLeft: "Las herramientas más usadas están en la barra de tareas de abajo.",
       shelfRight: "¿Terminó? Haga clic en Exit Session en la esquina inferior derecha."
     }
   };
@@ -655,12 +791,22 @@
     window.open(url, "_blank", "noopener");
   });
 
-  // Why Chromeboxes popup
-  const why = document.getElementById("why");
-  document.getElementById("why-open").addEventListener("click", () => why.showModal());
-  document.getElementById("why-close").addEventListener("click", () => why.close());
-  // Clicking the dimmed area outside the popup closes it; Esc closes it too.
-  why.addEventListener("click", e => { if (e.target === why) why.close(); });
+  // Popups (Why Chromeboxes, How to print)
+  // Any element with data-open-dialog="<id>" opens that popup; data-close-dialog closes it.
+  document.addEventListener("click", e => {
+    const opener = e.target.closest("[data-open-dialog]");
+    if (opener) {
+      const dlg = document.getElementById(opener.dataset.openDialog);
+      if (dlg && !dlg.open) dlg.showModal();
+      return;
+    }
+    const closer = e.target.closest("[data-close-dialog]");
+    if (closer) closer.closest("dialog").close();
+  });
+  // Clicking the dimmed area outside a popup closes it; Esc closes it too.
+  document.querySelectorAll("dialog").forEach(dlg => {
+    dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+  });
 </script>
 
 </body>
